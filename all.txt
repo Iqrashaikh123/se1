@@ -1,0 +1,749 @@
+Exp2
+
+AIM : Use basic networking commands in Linux (ping, traceroute, nslookup, netstat, ARP, RARP, ip, ifconfig, dig, route )
+    1. ping
+        Purpose: Tests connectivity to a host by sending ICMP echo requests.
+        Syntax: ping [options] destination
+        Example:Ping google.com    
+
+    2. traceroute
+        Purpose: Shows the path packets take to reach a destination host.
+        Syntax: traceroute [options] destination
+        Example:Traceroute google.com  
+
+    3. nslookup
+        Purpose: Queries DNS to find hostname or IP address information.
+        Syntax: nslookup [domain]
+        Example: nslookup google.com
+    4. netstat
+        Purpose: Displays network connections, routing tables, and interface statistics.
+        Syntax: netstat [options]
+        Example: netstat -tuln   
+    5. arp
+        Purpose: Displays or modifies the system's ARP table (IP-to-MAC address mappings).
+        Syntax: arp [options]
+        Example:arp -a
+    6. rarp
+        Purpose: (Less common) Resolves IP addresses to MAC addresses in reverse; mainly used in older systems.
+        Note: Often replaced by arp or ip commands now.
+        Example: rarp -a    
+    7. ip
+        Purpose: Displays/manages IP address, routing, and network interfaces.
+        Syntax: ip [options]
+        Example:ip addr show
+     
+    8. ifconfig
+        Purpose: Configures or displays network interfaces (deprecated in favor of ip).
+        Syntax: ifconfig [interface]
+        Example:ifconfig
+     9. dig
+        Purpose: The dig command in Linux is a powerful tool for querying Domain Name System (DNS) servers. It's used to troubleshoot DNS issues, verify DNS settings, and gather information about domain names. dig stands for Domain Information Groper, and it allows users to look up various DNS records like A, MX, NS, and more. 
+        Syntax: dig [options] domain
+        Example:dig google.com
+     
+    10. route
+        Purpose: Displays or modifies the IP routing table.The route command in Linux is used to view and manipulate the kernel's IP routing table. It allows users to display the current routing table, add new routes, and delete existing ones. While the route command is still functional, it's considered deprecated, with ip route being the recommended tool for managing routes.
+        Syntax: route [options]
+        Example: route -n
+        
+
+Conclusion:
+Basic networking commands in Linux are essential tools for diagnosing, troubleshooting, and managing network connections. Commands like ping and traceroute help test connectivity and trace the path data takes to reach a destination. nslookup and dig are used to query DNS servers for domain name information. netstat displays active network connections and listening ports. ARP and RARP manage mappings between IP addresses and MAC addresses, helping resolve hardware addresses. The ip and ifconfig commands configure and display network interface settings. route shows and manipulates the IP routing table.
+Together, these commands provide a comprehensive toolkit for understanding and controlling network behavior on Linux systems, making network management more effective and efficient.
+
+---------------------------------------------------------------------------------------------------------------------------------
+EXP3 : CRS
+
+AIM : To perform CRC for error detection Cyclic Redundancy Checking
+
+    The cyclic redundancy check (CRC) is a technique used to detect errors in digital data. CRC is a hash function that detects accidental changes to raw computer data commonly used in digital telecommunications networks and storage devices such as hard disk drives. CRC uses Generator Polynomial which is available on both sender and receiver side.
+
+    n : Number of bits in data to be sent from the sender side.
+    k : Number of bits in the key obtained from the generator polynomial.
+
+CODE :
+
+datastream = input("Enter datastream (in binary): ")
+divisor = input("Enter divisor (generator polynomial in binary): ")
+
+l_key = len(divisor)
+dividend = datastream + '0'*(l_key - 1)
+pick = l_key
+tmp = dividend[0:pick]
+
+while pick < len(dividend):
+	if tmp[0] == '1':
+    	result = []
+    	for i in range(1, l_key):
+        	result.append('0' if tmp[i] == divisor[i] else '1')
+    	tmp = ''.join(result) + dividend[pick]
+	else:
+    	result = []
+    	for i in range(1, l_key):
+        	result.append('0' if tmp[i] == '0' else '1')
+    	tmp = ''.join(result) + dividend[pick]
+	pick += 1
+
+if tmp[0] == '1':
+	result = []
+	for i in range(1, l_key):
+    	result.append('0' if tmp[i] == divisor[i] else '1')
+	remainder = ''.join(result)
+else:
+	result = []
+	for i in range(1, l_key):
+    	result.append('0' if tmp[i] == '0' else '1')
+	remainder = ''.join(result)
+
+codeword = datastream + remainder
+print("Codeword (Sender):", codeword)
+Output:
+Enter datastream (in binary): 1010101010
+Enter divisor (generator polynomial in binary): 11001
+
+--- Sender Side ---
+Codeword (Sender): 10101010100010
+
+
+
+
+
+OR +++++++++++++++++
+
+Code:
+# Sender Side CRC Implementation
+datastream = input("Enter datastream (in binary): ")
+divisor = input("Enter divisor (generator polynomial in binary): ")
+
+l_key = len(divisor)
+dividend = datastream + '0' * (l_key - 1)
+pick = l_key
+tmp = dividend[0:pick]
+
+while pick < len(dividend):
+    if tmp[0] == '1':
+        result = []
+        for i in range(1, l_key):
+            result.append('0' if tmp[i] == divisor[i] else '1')
+        tmp = ''.join(result) + dividend[pick]
+    else:
+        result = []
+        for i in range(1, l_key):
+            result.append('0' if tmp[i] == '0' else '1')
+        tmp = ''.join(result) + dividend[pick]
+    pick += 1
+
+if tmp[0] == '1':
+    result = []
+    for i in range(1, l_key):
+        result.append('0' if tmp[i] == divisor[i] else '1')
+    remainder = ''.join(result)
+else:
+    result = []
+    for i in range(1, l_key):
+        result.append('0' if tmp[i] == '0' else '1')
+    remainder = ''.join(result)
+
+codeword = datastream + remainder
+print("\n--- Sender Side ---")
+print("Codeword (Sender):", codeword)
+
+
+# Receiver Side CRC Checking
+received = input("\nEnter received codeword (binary): ")
+
+pick = l_key
+tmp = received[0:pick]
+
+while pick < len(received):
+    if tmp[0] == '1':
+        result = []
+        for i in range(1, l_key):
+            result.append('0' if tmp[i] == divisor[i] else '1')
+        tmp = ''.join(result) + received[pick]
+    else:
+        result = []
+        for i in range(1, l_key):
+            result.append('0' if tmp[i] == '0' else '1')
+        tmp = ''.join(result) + received[pick]
+    pick += 1
+
+if tmp[0] == '1':
+    result = []
+    for i in range(1, l_key):
+        result.append('0' if tmp[i] == divisor[i] else '1')
+    syndrome = ''.join(result)
+else:
+    result = []
+    for i in range(1, l_key):
+        result.append('0' if tmp[i] == '0' else '1')
+    syndrome = ''.join(result)
+
+print("\n--- Receiver Side ---")
+print("Syndrome:", syndrome)
+
+if '1' in syndrome:
+    print("Error Detected ")
+else:
+    print("No Error ")
+
+Output:
+Enter datastream (in binary): 1010101010
+Enter divisor (generator polynomial in binary): 11001
+
+--- Sender Side ---
+Codeword (Sender): 10101010100010
+
+Enter received codeword (binary): 10101010100010
+
+--- Receiver Side ---
+Syndrome: 0000
+No Error 
+++++++++++++++++++++++++++++++++++++++++++
+
+IN C
+
+
+#include <stdio.h>
+#include <string.h>
+
+void xor_division(char data[], char divisor[], char remainder[]) {
+    int i, j;
+    int dl = strlen(data);
+    int gl = strlen(divisor);
+
+    for (i = 0; i <= dl - gl; i++) {
+        if (data[i] == '1') {
+            for (j = 0; j < gl; j++) {
+                data[i + j] = (data[i + j] == divisor[j]) ? '0' : '1';
+            }
+        }
+    }
+
+    for (i = 0; i < gl - 1; i++) {
+        remainder[i] = data[dl - gl + 1 + i];
+    }
+    remainder[gl - 1] = '\0';
+}
+
+int main() {
+    char datastream[100], divisor[20], data[120], remainder[20], received[120];
+    int i, l_key;
+
+    printf("Enter datastream: ");
+    scanf("%s", datastream);
+
+    printf("Enter divisor: ");
+    scanf("%s", divisor);
+
+    strcpy(data, datastream);
+    l_key = strlen(divisor);
+    for (i = 0; i < l_key - 1; i++)
+        data[strlen(datastream) + i] = '0';
+    data[strlen(datastream) + l_key - 1] = '\0';
+
+    xor_division(data, divisor, remainder);
+
+    strcpy(data, datastream);
+    strcat(data, remainder);
+
+    printf("\n--- Sender Side ---\n");
+    printf("Codeword: %s\n", data);
+
+    printf("\nEnter received codeword: ");
+    scanf("%s", received);
+
+    xor_division(received, divisor, remainder);
+
+    printf("\n--- Receiver Side ---\n");
+    printf("Syndrome: %s\n", remainder);
+
+    if (strcmp(remainder, "000") == 0)
+        printf("No Error \n");
+    else
+        printf("Error Detected \n");
+
+    return 0;
+}
+
+
+gcc filename.c -o output
+./output
+
+CONCLUSION:
+This experiment demonstrated how CRC effectively detects errors in digital data by generating a codeword using a generator polynomial. The process ensures data integrity during transmission, highlighting CRC's importance in reliable communication systems.
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+EXP4 : stop and wait
+
+AIM: WAP to implement stop and wait operation .
+Theory of Stop-and-Wait Protocol
+1. Purpose and Context:
+The Stop-and-Wait protocol is a fundamental data link layer protocol used to ensure reliable data transmission over unreliable or connectionless networks, such as UDP (User Datagram Protocol). It introduces mechanisms for acknowledgment and retransmission to handle packet loss and ensure data integrity.
+The receiver checks the sequence number, processes valid packets, and sends back ACKs. If duplicate packets are received, the receiver resends the last ACK. This simple mechanism guarantees data integrity but can be slow due to waiting times. The provided code demonstrates this protocol in action between a sender and receiver.
+
+Receicer.c:
+// stop_and_wait_receiver.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>  // close()
+#include <arpa/inet.h>
+
+int main() {
+	int sockfd;
+	struct sockaddr_in servaddr, cliaddr;
+	char buffer[1024];
+	int expected_seq = 0;
+
+	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sockfd < 0) { perror("socket"); exit(1); }
+
+	memset(&servaddr, 0, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_port = htons(12345);
+	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+	if (bind(sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
+    	perror("bind"); exit(1);
+	}
+
+	printf("Receiver ready...\n");
+
+	socklen_t len = sizeof(cliaddr);
+	while (1) {
+    	int n = recvfrom(sockfd, buffer, sizeof(buffer)-1, 0,
+                     	(struct sockaddr *)&cliaddr, &len);
+    	if (n < 0) { perror("recvfrom"); continue; }
+    	buffer[n] = '\0';
+
+    	if (strcmp(buffer, "END") == 0) {
+        	printf("Receiver: Transmission ended by sender.\n");
+        	break;
+    	}
+
+    	int seq_num;
+    	char payload[1000];
+    	if (sscanf(buffer, "%d:%999[^\n]", &seq_num, payload) == 2) {
+        	if (seq_num == expected_seq) {
+            	printf("Receiver: Got (seq=%d) -> %s\n", seq_num, payload);
+            	char ack[10];
+            	sprintf(ack, "ACK%d", seq_num);
+            	sendto(sockfd, ack, strlen(ack), 0,
+                   	(struct sockaddr *)&cliaddr, len);
+            	expected_seq = 1 - expected_seq;
+        	} else {
+            	printf("Receiver: Unexpected seq=%d. Resending last ACK.\n", seq_num);
+            	char ack[10];
+            	sprintf(ack, "ACK%d", 1 - expected_seq);
+            	sendto(sockfd, ack, strlen(ack), 0,
+                   	(struct sockaddr *)&cliaddr, len);
+        	}
+    	} else {
+        	printf("Receiver: Invalid packet format\n");
+    	}
+	}
+
+	close(sockfd);
+	return 0;
+}
+
+Sender.c:
+// stop_and_wait_sender.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>   // close()
+#include <arpa/inet.h>
+#include <sys/time.h> // timeval for timeout
+
+int main() {
+	int sockfd;
+	struct sockaddr_in servaddr;
+	char buffer[1024];
+	char *messages[] = {"Hello", "World", "This", "Is", "Stop-and-Wait"};
+	int seq_num = 0;
+
+	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sockfd < 0) { perror("socket"); exit(1); }
+
+	memset(&servaddr, 0, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_port = htons(12345);
+	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+	// set receive timeout to 2 seconds
+	struct timeval timeout;
+	timeout.tv_sec = 2;
+	timeout.tv_usec = 0;
+	setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+
+	for (int i = 0; i < sizeof(messages)/sizeof(messages[0]); i++) {
+    	while (1) {
+        	char packet[1024];
+        	sprintf(packet, "%d:%s", seq_num, messages[i]);
+        	sendto(sockfd, packet, strlen(packet), 0,
+               	(const struct sockaddr *)&servaddr, sizeof(servaddr));
+        	printf("Sender: Sent (seq=%d) -> %s\n", seq_num, messages[i]);
+
+        	socklen_t len = sizeof(servaddr);
+        	int n = recvfrom(sockfd, buffer, sizeof(buffer)-1, 0,
+                         	(struct sockaddr *)&servaddr, &len);
+        	if (n < 0) {
+            	perror("Sender: Timeout or error, resending...");
+            	continue;
+        	}
+        	buffer[n] = '\0';
+
+        	char expected_ack[10];
+        	sprintf(expected_ack, "ACK%d", seq_num);
+        	if (strcmp(buffer, expected_ack) == 0) {
+            	printf("Sender: Received %s\n", buffer);
+            	seq_num = 1 - seq_num;
+            	break;
+        	} else {
+            	printf("Sender: Unexpected ACK: %s. Resending...\n", buffer);
+        	}
+    	}
+	}
+
+	// end transmission
+	sendto(sockfd, "END", 3, 0, (const struct sockaddr *)&servaddr, sizeof(servaddr));
+	printf("Sender: All messages sent. Transmission ended.\n");
+
+	close(sockfd);
+	return 0;
+}
+
+
+
+OUTPUT:
+gcc receiver.c -o receiver
+gcc sender.c -o sender
+./receiver
+Receiver ready...
+./sender
+Sender: All messages sent. Transmission ended.
+    Receiver: Transmission ended by sender.
+Sender Side Output:
+Sender: Sent (seq=0) -> Hello
+Sender: Received ACK0
+Sender: Sent (seq=1) -> World
+Sender: Received ACK1
+...
+Receiver Side Output:
+Sender: All messages sent. Transmission ended.
+Receiver ready...
+Receiver: Got (seq=0) -> Hello
+Receiver: Got (seq=1) -> World
+...
+Receiver: Transmission ended by sender.
+
+
+
+
+CONCLUSION:
+The experiment effectively demonstrates the implementation of the Stop-and-Wait protocol, showcasing how acknowledgment, sequence numbers, and retransmission mechanisms work together to ensure reliable data transfer over an unreliable network like UDP. While simple and effective for small data transmissions, the protocol's inefficiency becomes apparent in high-latency environments. Overall, it provides a foundational understanding of reliable communication techniques essential for network protocols.
+
+---------------------------------------------------------------------------------------------------------------------------------
+EXP6 : socket programming
+
+
+AIM: WAP  To perform socket programming .
+Network programming in Java enables communication between multiple devices connected via a network. It relies on sockets, which act as endpoints combining an IP address and port number to establish reliable communication channels. Using the java.net package, applications can implement both server and client programs to exchange data efficiently.
+A server uses ServerSocket to listen on a specific port, while the client uses Socket to connect. Once connected, data transfer occurs through input and output streams. TCP ensures reliable, two-way communication, while UDP supports faster but connectionless communication. This makes sockets a fundamental concept in building network-based applications.
+Sever.java
+
+import java.io.*;
+import java.net.*;
+import java.util.Scanner;
+class server
+{
+public static void main(String [] args) throws IOException
+{
+int number;
+ServerSocket s=new ServerSocket(1654);
+Socket so=s.accept();
+Scanner sc=new Scanner(so.getInputStream());
+int n=sc.nextInt();
+int m=sc.nextInt();
+int area=m*n;
+PrintStream p=new PrintStream(so.getOutputStream());
+System.out.println("Area calc here is "+area);
+p.println(area);
+}
+}
+
+
+Client.java
+import java.io.*;
+import java.net.*;
+import java.util.Scanner;
+class client
+{
+public static void main(String [] args) throws IOException
+{
+int number;
+Scanner sc=new Scanner(System.in);
+int l=sc.nextInt();
+int b=sc.nextInt();
+Socket s=new Socket("127.0.0.1",1654);
+PrintStream p=new PrintStream(s.getOutputStream());
+p.println(l);
+p.println(b);
+Scanner sc1=new Scanner(s.getInputStream());
+int area=sc1.nextInt();
+System.out.println("Area is "+area);
+}
+}
+
+output:
+
+javac Server.java
+javac Client.java
+java Server
+java Client
+
+Client:
+Enter Length: 10
+Enter Breadth: 5
+Area Received from Server: 50
+
+server:
+Server Started... Waiting for Client...
+Client Connected!
+Area Calculated & Sent: 50
+
+
+Conclusion:
+In conclusion, Java socket programming provides a simple and effective way to enable communication between systems over a network. By using sockets with TCP or UDP, developers can build reliable, real-time client-server applications.
+
+-----------------------------------------------------------------------------------------------------------
+EXP5 : telnet
+EXPERIMENT NO - 5
+Name: Iqra Shaikh
+ Roll no:24DCO06
+ Batch:01
+Aim: Case study on Telnet 
+Theory: Telnet
+            Telnet, which stands for Teletype Network, is a networking protocol and command-line interface used to provide a two-way, interactive text-based communication channel between two hosts on a network. It enables a user to log in to a remote computer (server) and execute commands as if they were physically present at the remote machine. It operates on TCP port 23.
+            Originally developed in 1969, Telnet was one of the first protocols for remote access, but its use has significantly declined due to a major security vulnerability: it transmits data, including usernames and passwords, in plain text. This lack of encryption makes it highly susceptible to eavesdropping and man-in-the-middle attacks
+
+Advantages of Telnet
+        Simplicity and Ease of Use: Its text-based nature makes it straightforward to use for basic remote management tasks.
+        Universally Supported: Most network devices and operating systems still support Telnet,
+        Low Overhead: The protocol is lightweight and requires minimal bandwidth, which can be useful in low-speed or resource-constrained environments.
+
+Disadvantages of Telnet
+        Lack of Security: The most significant drawback is that all data is transmitted in plain text, making it highly vulnerable to snooping.
+        No Authentication: Telnet offers very weak authentication mechanisms, making it easy for attackers to compromise systems.
+        No Encryption: It provides no security features, which is why it has been largely replaced by secure alternatives like SSH.
+        Telnet Client
+        A Telnet client is a software application that allows a user to initiate a connection to a remote server using the Telnet protocol. Most modern operating systems have a built-in Telnet client, but it is often disabled by default for security reasons. Users can enable the client via a command-line command or through the system's "Turn Windows features on or off" settings. The basic command syntax is typically telnet <hostname> <port>.
+
+
+insha: telnet 172.16.101.20
+
+
+output:
+1 ip addr show
+# or (older)
+ifconfig
+
+Step 1: Check Telnet is installed
+
+Open terminal and run:
+
+telnet
+
+
+If you see a telnet> prompt ->  installed
+Type:
+
+quit
+
+
+to exit the prompt.
+
+Step 2: Find your system’s IP address (Server IP)
+
+Run:
+
+hostname -I
+
+
+or
+
+ip a
+
+
+Note the IP -> example: 192.168.43.50
+
+You will connect to this IP.
+
+You can use the same PC as both client & server.
+
+Step 3: Start Telnet Connection
+
+Use this command:
+
+telnet 127.0.0.1 23
+
+
+OR if you want to connect using your LAN IP (better for screenshots):
+
+telnet <your_IP_here> 23
+
+
+Example:
+
+telnet 192.168.43.50 23
+
+ Expected Output (Write in journal)
+You will get a remote login screen or connection message
+You can type commands like ls, pwd, and whoami
+
+Example:
+
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+Ubuntu login:
+
+You are now remotely logged into your own system
+
+Step 4: Close Telnet Session  Use: exit or quit
+
+Conclusion
+In conclusion, the Telnet protocol is a fundamental but now largely obsolete tool for remote network management. While its simplicity and universal compatibility made it a valuable asset in the early days of networking, its critical lack of security, specifically the transmission of unencrypted data, has rendered it unsuitable for modern applications. The rise of more secure and robust protocols like SSH (Secure Shell) has effectively replaced Telnet for all tasks requiring a secure and private connection, highlighting the importance of data encryption in today's interconnected world.
+
+
+-----------------------------------------------------------------------------------------------------------
+EXP 9 Mesh topology
+
+AIM :Mesh Topology in Cisco Packet Tracer with IP Configuration
+What is Mesh Topology?
+Mesh topology is a network design where every device is directly connected to all other devices. This creates multiple communication paths between devices, making the network highly reliable and fault-tolerant.
+Advantages
+    High Reliability – Network continues to function even if one link fails.
+    Fast Communication – Direct links allow simultaneous data transfers.
+    Secure – Dedicated paths reduce the chances of unauthorized access.
+
+Disadvantages
+    Expensive – Requires a large number of cables and ports.
+    Complex Setup – Becomes difficult to configure and manage with more devices.
+    Not Easily Scalable – Number of connections increases rapidly as devices increase
+
+Steps to Install Cisco Packet Tracer
+    Visit the Cisco NetAcad website.
+    Create or log in to your account.
+    Download Cisco Packet Tracer for your operating system.
+    Install and launch the software.
+
+Steps to Implement Mesh Topology with IP Configuration
+    Open Cisco Packet Tracer.
+    Drag and place PCs or Routers (Example: PC1, PC2, PC3, PC4).
+    Connect each device to every other device using Copper Cross-Over cables:
+              
+Conclusion
+Mesh topology provides excellent reliability and performance due to its multiple redundant paths. Although it requires more cost and effort to set up, it is ideal for critical networks where continuous communication is essential. Cisco Packet Tracer helps in visualizing and understanding this topology effectively.
+
+
+
+
+-----------------------------------------------------------------------------------------------------------
+Exp10 RIP
+Experiment No. 10
+
+Name:- Iqra Shaikh
+Roll no:- 24DCO06
+Batch :- 01
+
+AIM :Implementation of RIP Routing Protocol in Cisco Packet Tracer
+What is RIP Protocol?
+    RIP (Routing Information Protocol) is a distance-vector routing protocol used in small to medium-sized networks. It uses hop count as the metric to determine the best path and allows a maximum of 15 hops.
+Advantages
+        Simple to configure and manage
+        Automatically updates routing tables through neighbor routers
+        Suitable for small networks and lab simulations
+Disadvantages
+        Slow convergence compared to modern protocols
+        Limited to 15 hops, not suitable for large networks
+        Does not support advanced features like authentication or VLSM (in RIP v1)
+Network Topology (Similar to Provided Structure)
+        PC0 ↔ Switch0 ↔ Router0 ↔ Router1 ↔ Switch1 ↔ PC1
+Testing Connectivity
+        Go to PC0 → Command Prompt
+        ping 192.168.2.10
+
+
+
+        2 Routers (Router0 and Router1)
+        2 Switches (Switch0 and Switch1)
+        2 PCs (PC0 and PC1)
+
+
+Connect the devices:
+
+
+    PC0 → Switch0 (Copper Straight-Through)
+    Switch0 → Router0 FastEthernet0/0 (Straight-Through)
+    Router0 Serial0/0 → Router1 Serial0/0 (Serial Cable – DCE to DTE)
+    Router1 FastEthernet0/0 → Switch1 (Straight-Through)
+    Switch1 → PC1 (Straight-Through)
+
+
+Assign IP addresses to PCs:
+
+
+    PC0: 192.168.1.10 / 255.255.255.0
+    PC1: 192.168.2.10 / 255.255.255.0
+
+
+Configure IP addresses on Router0:
+
+
+    FastEthernet0/0 → 192.168.1.1 / 255.255.255.0
+    Serial0/0 → 10.0.0.1 / 255.255.255.252
+
+
+Configure IP addresses on Router1:
+
+
+    FastEthernet0/0 → 192.168.2.1 / 255.255.255.0
+    Serial0/0 → 10.0.0.2 / 255.255.255.252
+
+
+Enable RIP on Router0:
+
+
+    Enter router configuration mode
+    Use command: router rip
+    Use version 2
+    Add networks:
+    network 192.168.1.0
+    network 10.0.0.0
+
+
+Enable RIP on Router1:
+
+
+        Enter router configuration mode
+        Use command: router rip
+        Use version 2
+        Add networks: 
+        network 192.168.2.0
+        network 10.0.0.0
+
+
+Test communication:
+
+
+    From PC0, open Command Prompt
+    Type: ping 192.168.2.10
+    If replies are received, RIP is working correctly.
+        
+Conclusion
+The RIP protocol allows routers to automatically share routing information using hop count as the metric. It is easy to configure and ideal for basic routing simulations in Cisco Packet Tracer. Although it lacks scalability, it provides a solid foundation for understanding dynamic routing concepts.
+
